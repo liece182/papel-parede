@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cronômetro FLL</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    #timer { font-size: 4em; margin: 20px; }
+    button { font-size: 1.5em; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>Cronômetro FLL</h1>
+  <div id="timer">02:30</div>
+  <button id="startBtn">▶ Start</button>
+
+  <audio id="buzina" src="https://www.soundjay.com/misc/sounds/buzzer-01.mp3"></audio>
+  <audio id="musica1" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <audio id="musica2" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+  <audio id="musica3" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"></audio>
+
+  <script>
+    const timerDisplay = document.getElementById("timer");
+    const startBtn = document.getElementById("startBtn");
+    const buzina = document.getElementById("buzina");
+    const musicas = [
+      document.getElementById("musica1"),
+      document.getElementById("musica2"),
+      document.getElementById("musica3")
+    ];
+
+    let countdown;
+    let playingMusic = null;
+
+    function startTimer() {
+      clearInterval(countdown);
+
+      // Reset música
+      if (playingMusic) {
+        playingMusic.pause();
+        playingMusic.currentTime = 0;
+      }
+
+      // Seleciona música aleatória
+      playingMusic = musicas[Math.floor(Math.random() * musicas.length)];
+      playingMusic.play();
+
+      let duration = 150; // 2:30 em segundos
+      updateDisplay(duration);
+
+      countdown = setInterval(() => {
+        duration--;
+        updateDisplay(duration);
+
+        if (duration <= 0) {
+          clearInterval(countdown);
+          if (playingMusic) {
+            playingMusic.pause();
+            playingMusic.currentTime = 0;
+          }
+          buzina.play();
+        }
+      }, 1000);
+    }
+
+    function updateDisplay(seconds) {
+      const min = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const sec = String(seconds % 60).padStart(2, "0");
+      timerDisplay.textContent = `${min}:${sec}`;
+    }
+
+    startBtn.addEventListener("click", startTimer);
+  </script>
+</body>
+</html>
